@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_test/cards/small.dart';
+import 'package:flutter_app_test/cards/card_tl.dart';
 import 'package:flutter_app_test/pages/about_page.dart';
 import 'package:flutter_app_test/pages/set_page.dart';
 
 class HomePage extends StatefulWidget {
+  final MyCard card1 = new MyCard("剪刀");
+  final MyCard card2 = new MyCard("石头");
+  final MyCard card3 = new MyCard("布");
+
   @override
   _HomePageState createState() => new _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  String mainString = "Fighting";
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -46,8 +51,17 @@ class _HomePageState extends State<HomePage> {
                 trailing: new Icon(Icons.settings),
                 onTap: () {
                   Navigator.of(context).pop();
-                  Navigator.of(context).push(new MaterialPageRoute(
-                      builder: (BuildContext context) => new SetPage()));
+                  Navigator.push<List>(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          new SetPage(widget.card1, widget.card2, widget.card3),
+                    ),
+                  ).then((List result) {
+                    if (result[0] != '') widget.card1.cardName = result[0];
+                    if (result[1] != '') widget.card2.cardName = result[1];
+                    if (result[2] != '') widget.card3.cardName = result[2];
+                  });
                 }),
             new ListTile(
                 //第二个功能项
@@ -73,18 +87,49 @@ class _HomePageState extends State<HomePage> {
         children: [
           new Container(
             child: new Text(
-              'Fighting!',
+              mainString,
               style: new TextStyle(fontSize: 35.0),
             ),
             alignment: Alignment.center,
-            width: 300,
-            height: 500,
+            color: Color.fromARGB(223, 121, 322, 213),
+//            width: 300,
+            height: 300,
           ),
-          new SmallCards(),
+          new Expanded(
+            child: new Row(
+              children: <Widget>[
+                new Expanded(
+                  child: new FlatButton(
+                    onPressed: () {
+                      mainString = widget.card1.cardName;
+                    },
+                    child: new Text(widget.card1.cardName,
+                        style: new TextStyle(fontSize: 20.0)),
+                  ),
+                ),
+                new Expanded(
+                  child: new FlatButton(
+                    onPressed: () {
+                      mainString = widget.card2.cardName;
+                    },
+                    child: new Text(widget.card2.cardName,
+                        style: new TextStyle(fontSize: 20.0)),
+                  ),
+                ),
+                new Expanded(
+                  child: new FlatButton(
+                    onPressed: () {
+                      mainString = widget.card2.cardName;
+                    },
+                    child: new Text(widget.card3.cardName,
+                        style: new TextStyle(fontSize: 20.0)),
+                  ),
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );
   }
-
-
 }
