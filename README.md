@@ -1,16 +1,19 @@
-# flutter_app_test
+# Flutter App——石头剪刀布
 
-A new Flutter application.
+## 项目说明
 
-## Getting Started
+初学 Flutter 极易上手的 App，目前1.0版本所用到的功能有
 
-This project is a starting point for a Flutter application.
+- widget 相关绘制问题解决
+- 页面之间传参与传回
+- 点击响应事件刷新UI布局
 
-A few resources to get you started if this is your first Flutter project:
+欢迎大家 Star！有什么相关改进或者想法可以issue~
 
-- [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
+## 项目设计
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+![项目功能分析](stage.png)
+
+## 项目开发笔记
+
+关于项目相关技术与代码解释可以参考我的[个人博客](https://allenmistake.github.io/)

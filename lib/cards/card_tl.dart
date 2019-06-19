@@ -1,7 +1,8 @@
 class MyCard {
   String cardName;
   String cardImage;
+  int cardId;
 
-  MyCard(this.cardName);
+  MyCard(this.cardName,this.cardId);
 }
 

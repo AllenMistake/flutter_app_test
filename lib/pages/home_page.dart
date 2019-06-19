@@ -1,19 +1,22 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/cards/card_tl.dart';
 import 'package:flutter_app_test/pages/about_page.dart';
 import 'package:flutter_app_test/pages/set_page.dart';
 
 class HomePage extends StatefulWidget {
-  final MyCard card1 = new MyCard("剪刀");
-  final MyCard card2 = new MyCard("石头");
-  final MyCard card3 = new MyCard("布");
+  final MyCard card1 = new MyCard("剪刀",0);
+  final MyCard card2 = new MyCard("石头",1);
+  final MyCard card3 = new MyCard("布",2);
+  String mainString = "Fighting";
 
   @override
   _HomePageState createState() => new _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  String mainString = "Fighting";
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -87,7 +90,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           new Container(
             child: new Text(
-              mainString,
+              widget.mainString,
               style: new TextStyle(fontSize: 35.0),
             ),
             alignment: Alignment.center,
@@ -99,9 +102,40 @@ class _HomePageState extends State<HomePage> {
             child: new Row(
               children: <Widget>[
                 new Expanded(
-                  child: new FlatButton(
+                  child: new MaterialButton(
                     onPressed: () {
-                      mainString = widget.card1.cardName;
+                      setState(() {
+                        widget.mainString = widget.card1.cardName;
+                      });
+                      MyCard aiCard = _aiCard(widget.card1.cardId);
+                      showDialog<Null>(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return new AlertDialog(
+                            title: new Text('比赛结果'),
+                            content: new SingleChildScrollView(
+                              child: new ListBody(
+                                children: <Widget>[
+                                  new Text('您出的是${widget.card1.cardName}'),
+                                  new Text('电脑出的是${aiCard.cardName}'),
+                                  new Text(_cardCompare(aiCard.cardId, widget.card1.cardId)),
+                                ],
+                              ),
+                            ),
+                            actions: <Widget>[
+                              new FlatButton(
+                                child: new Text('确定'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      ).then((val) {
+                        print(val);
+                      });
                     },
                     child: new Text(widget.card1.cardName,
                         style: new TextStyle(fontSize: 20.0)),
@@ -110,16 +144,78 @@ class _HomePageState extends State<HomePage> {
                 new Expanded(
                   child: new FlatButton(
                     onPressed: () {
-                      mainString = widget.card2.cardName;
+                      setState(() {
+                        widget.mainString = widget.card2.cardName;
+                      });
+                      MyCard aiCard = _aiCard(widget.card2.cardId);
+                      showDialog<Null>(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return new AlertDialog(
+                            title: new Text('比赛结果'),
+                            content: new SingleChildScrollView(
+                              child: new ListBody(
+                                children: <Widget>[
+                                  new Text('您出的是${widget.card2.cardName}'),
+                                  new Text('电脑出的是${aiCard.cardName}'),
+                                  new Text(_cardCompare(aiCard.cardId, widget.card2.cardId)),
+                                ],
+                              ),
+                            ),
+                            actions: <Widget>[
+                              new FlatButton(
+                                child: new Text('确定'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      ).then((val) {
+                        print(val);
+                      });
                     },
                     child: new Text(widget.card2.cardName,
                         style: new TextStyle(fontSize: 20.0)),
                   ),
                 ),
                 new Expanded(
-                  child: new FlatButton(
+                  child: new RaisedButton(
                     onPressed: () {
-                      mainString = widget.card2.cardName;
+                      setState(() {
+                        widget.mainString = widget.card3.cardName;
+                      });
+                      MyCard aiCard = _aiCard(widget.card3.cardId);
+                      showDialog<Null>(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return new AlertDialog(
+                            title: new Text('比赛结果'),
+                            content: new SingleChildScrollView(
+                              child: new ListBody(
+                                children: <Widget>[
+                                  new Text('您出的是${widget.card3.cardName}'),
+                                  new Text('电脑出的是${aiCard.cardName}'),
+                                  new Text(_cardCompare(aiCard.cardId, widget.card3.cardId)),
+                                ],
+                              ),
+                            ),
+                            actions: <Widget>[
+                              new FlatButton(
+                                child: new Text('确定'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      ).then((val) {
+                        print(val);
+                      });
                     },
                     child: new Text(widget.card3.cardName,
                         style: new TextStyle(fontSize: 20.0)),
@@ -132,4 +228,24 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  MyCard _aiCard(int personCard){
+    var n = Random().nextInt(2);
+    if(n==0)
+      return new MyCard("${widget.card1.cardName}", 0);
+    if(n==1)
+      return new MyCard("${widget.card2.cardName}", 1);
+    return new MyCard("${widget.card3.cardName}", 2);
+  }
+
+  String _cardCompare(int n,int m){
+    if(n == m)
+      return "平局";
+    if(n==0&&m==1||n==1&&m==2||n==2&&m==1)
+      return "您赢了！";
+    else return "电脑赢了！";
+  }
+
+
+
 }
