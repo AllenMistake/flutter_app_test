@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/cards/card_tl.dart';
 import 'package:flutter_app_test/pages/about_page.dart';
@@ -10,13 +10,47 @@ class HomePage extends StatefulWidget {
   final MyCard card2 = new MyCard("石头", 1);
   final MyCard card3 = new MyCard("布", 2);
   String mainString = "Fighting";
-
-
   @override
   _HomePageState createState() => new _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  Animation<double> animation;
+  AnimationController controller;
+  Animation<EdgeInsets> movement;
+
+  initState() {
+    super.initState();
+    controller = new AnimationController(
+        duration: const Duration(milliseconds: 5000), vsync: this);
+
+    //animation = new Tween(begin: 0.0, end: 300.0).animate(controller)
+    movement = EdgeInsetsTween(
+      begin: EdgeInsets.only(top: 0.0, right: 0.0),
+      end: EdgeInsets.only(top: 0.0, right: 100.0),
+    ).animate(
+      CurvedAnimation(
+        parent: controller,
+        curve: Interval(
+          0.1,
+          0.5,
+          curve: Curves.fastOutSlowIn,
+        ),
+      ),
+    )..addListener(() {
+      setState(() {
+        // the state that has changed here is the animation object’s value
+      });
+    });
+    controller.forward();
+  }
+
+  dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   MyCard aiCard;
   @override
   Widget build(BuildContext context) {
@@ -89,6 +123,8 @@ class _HomePageState extends State<HomePage> {
       body: new Column(
         //中央内容部分body
         children: [
+        resultAnimation(),
+          /*
           new Container(
             child: new Text(
               widget.mainString,
@@ -97,8 +133,10 @@ class _HomePageState extends State<HomePage> {
             alignment: Alignment.center,
             color: Color.fromARGB(223, 121, 322, 213),
 //            width: 300,
-            height: 550,
+            height: 300,
+            //padding: movement.value,
           ),
+          */
           new Expanded(
             child: new Row(
               children: <Widget>[
@@ -162,10 +200,18 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+
+
   MyCard _aiCard() {
     var n = Random().nextInt(3);
-    if (n == 0) {print('0');return new MyCard("${widget.card1.cardName}", 0);}
-    if (n == 1) {print('1');return new MyCard("${widget.card2.cardName}", 1);}
+    if (n == 0) {
+      print('0');
+      return new MyCard("${widget.card1.cardName}", 0);
+    }
+    if (n == 1) {
+      print('1');
+      return new MyCard("${widget.card2.cardName}", 1);
+    }
     print('$n');
     return new MyCard("${widget.card3.cardName}", 2);
   }
@@ -178,7 +224,7 @@ class _HomePageState extends State<HomePage> {
       return "电脑赢了！";
   }
 
-  void _pressCard(MyCard card){
+  void _pressCard(MyCard card) {
     setState(() {
       widget.mainString = card.cardName;
     });
@@ -194,8 +240,7 @@ class _HomePageState extends State<HomePage> {
               children: <Widget>[
                 new Text('您出的是${card.cardName}'),
                 new Text('电脑出的是${aiCard.cardName}'),
-                new Text(_cardCompare(
-                    aiCard.cardId, card.cardId)),
+                new Text(_cardCompare(aiCard.cardId, card.cardId)),
               ],
             ),
           ),
@@ -212,5 +257,21 @@ class _HomePageState extends State<HomePage> {
     ).then((val) {
       print(val);
     });
+  }
+
+  Widget resultAnimation(){
+
+
+    return new Container(
+      child: new Text(
+        widget.mainString,
+        style: new TextStyle(fontSize: 35.0),
+      ),
+      alignment: Alignment.center,
+      color: Color.fromARGB(223, 121, 322, 213),
+//            width: 300,
+      height: 300,
+      //padding: movement.value,
+    );
   }
 }

@@ -6,7 +6,7 @@ class SetPage extends StatefulWidget {
   final MyCard card2;
   final MyCard card3;
 
-  SetPage(this.card1,this.card2,this.card3);
+  SetPage(this.card1, this.card2, this.card3);
 
   @override
   _SetPageState createState() => new _SetPageState();
@@ -17,9 +17,6 @@ class _SetPageState extends State<SetPage> {
   final titleColor = Colors.blue;
   @override
   Widget build(BuildContext context) {
-    String s1 = widget.card1.cardName;
-    String s2 = widget.card2.cardName;
-    String s3 = widget.card3.cardName;
     final TextEditingController _controller1 = TextEditingController();
     final TextEditingController _controller2 = TextEditingController();
     final TextEditingController _controller3 = TextEditingController();
@@ -30,47 +27,70 @@ class _SetPageState extends State<SetPage> {
         backgroundColor: Colors.redAccent,
       ),
       body: Padding(
-        padding: EdgeInsets.all(10.0), //设置边距
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center, //内容居中
+        padding: EdgeInsets.all(10.0),
+        child: SafeArea(
+          child: ListView(
             children: <Widget>[
+              const SizedBox(height: 80.0),
+              new Center(
+                child: createTitle('自定义卡片名称'),
+              ),
+              const SizedBox(height: 10.0),
+              _buildTextField(0, widget.card1.cardName, _controller1, 0xf00b,
+                  'appIconFonts'),
               SizedBox(height: 10.0),
-              createTitle('自定义卡片名称'),
-              TextField(
-                controller: _controller1,
-                decoration: InputDecoration(
-                    icon: Icon(IconData(0xf00b, fontFamily: 'appIconFonts')),
-                    hintText: '$s1',
-                    border: OutlineInputBorder()
-                ),
-                //onSubmitted:  _card1Submitted,
-              ),
-              TextField(
-                controller: _controller2,
-                decoration: InputDecoration(
-                    icon: Icon(IconData(0xf009, fontFamily: 'appIconFonts')),
-                    hintText: '$s2',
-                    border: OutlineInputBorder()),
-              ),
-              TextField(
-                controller: _controller3,
-                decoration: InputDecoration(
-                    icon: Icon(IconData(0xf002, fontFamily: 'appIconFonts')),
-                    hintText: '$s3',
-                    border: OutlineInputBorder()),
-              ),
-          new RaisedButton(
-              color: Colors.blueAccent,
-              onPressed: () {
-                // 将输入的内容返回
-                var s = new List();
-                s.add(_controller1.text);
-                s.add(_controller2.text);
-                s.add(_controller3.text);
-                Navigator.of(context).pop(s);
-              },
-              child: new Text("确认"))
-            ]),
+              _buildTextField(1, widget.card2.cardName, _controller2, 0xf009,
+                  'appIconFonts'),
+              SizedBox(height: 10.0),
+              _buildTextField(2, widget.card3.cardName, _controller3, 0xf002,
+                  'appIconFonts'),
+              SizedBox(height: 10.0),
+            ButtonBar(
+              children: <Widget>[
+                RaisedButton(
+                  onPressed: () {
+                    var s = new List();
+                    s.add(_controller1.text);
+                    s.add(_controller2.text);
+                    s.add(_controller3.text);
+                    Navigator.of(context).pop(s);
+                  },
+                  child: Text('确认'),
+                  color: Colors.white,
+                )
+              ],
+            ),
+              /*
+              new RaisedButton(
+                  color: Colors.blueAccent,
+                  onPressed: () {
+                    // 将输入的内容返回
+
+                  },
+                  child: new Text("确认"))
+                  */
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(int i, String s, TextEditingController controller,
+      int iconNum, String iconFamily) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Material(
+        borderRadius: BorderRadius.circular(10.0),
+        child: TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            icon: Icon(IconData(iconNum, fontFamily: iconFamily)),
+            filled: true,
+            labelText: "$s",
+            fillColor: Colors.white,
+          ),
+        ),
       ),
     );
   }
