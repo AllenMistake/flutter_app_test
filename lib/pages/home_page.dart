@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class _HomePageState extends State<HomePage>
   Animation<double> animation;
   AnimationController controller;
   Animation<EdgeInsets> movement;
+  bool isForward = false;
 
   initState() {
     super.initState();
@@ -27,8 +29,8 @@ class _HomePageState extends State<HomePage>
 
     //animation = new Tween(begin: 0.0, end: 300.0).animate(controller)
     movement = EdgeInsetsTween(
-      begin: EdgeInsets.only(top: 0.0, right: 0.0),
-      end: EdgeInsets.only(top: 0.0, right: 100.0),
+      begin: EdgeInsets.only(top: 0.0, right: 100.0),
+      end: EdgeInsets.only(top: 0.0, left: 80.0),
     ).animate(
       CurvedAnimation(
         parent: controller,
@@ -39,10 +41,10 @@ class _HomePageState extends State<HomePage>
         ),
       ),
     )..addListener(() {
-      setState(() {
-        // the state that has changed here is the animation object’s value
+        setState(() {
+          // the state that has changed here is the animation object’s value
+        });
       });
-    });
     controller.forward();
   }
 
@@ -123,7 +125,14 @@ class _HomePageState extends State<HomePage>
       body: new Column(
         //中央内容部分body
         children: [
-        resultAnimation(),
+          AnimatedBuilder(
+              animation: controller,
+              builder: (BuildContext context, Widget child) {
+                return Container(
+                  padding: movement.value,
+                  child: new Text(widget.mainString),
+                );
+              }),
           /*
           new Container(
             child: new Text(
@@ -132,7 +141,6 @@ class _HomePageState extends State<HomePage>
             ),
             alignment: Alignment.center,
             color: Color.fromARGB(223, 121, 322, 213),
-//            width: 300,
             height: 300,
             //padding: movement.value,
           ),
@@ -166,6 +174,9 @@ class _HomePageState extends State<HomePage>
                       ),
                       new FlatButton(
                         onPressed: () {
+                          isForward ? controller.reverse() : controller.forward();
+                          isForward = !isForward;
+                          print('forward');
                           _pressCard(widget.card2);
                         },
                         child: new Text(widget.card2.cardName,
@@ -199,8 +210,6 @@ class _HomePageState extends State<HomePage>
       ),
     );
   }
-
-
 
   MyCard _aiCard() {
     var n = Random().nextInt(3);
@@ -259,9 +268,7 @@ class _HomePageState extends State<HomePage>
     });
   }
 
-  Widget resultAnimation(){
-
-
+  Widget resultAnimation() {
     return new Container(
       child: new Text(
         widget.mainString,
