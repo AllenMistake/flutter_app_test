@@ -20,15 +20,15 @@ class _HomePageState extends State<HomePage>
   Animation<double> animation;
   AnimationController controller;
   Animation<double> animationAI;
-  AnimationController controllerAI;
-  String picPath = "images/cards/stone.jpg";
+  String playerPicPath = "images/cards/stone.jpg";
+  String aiPicPath = "images/cards/stone.jpg";
   MyCard myCard = new MyCard('Fighting', 0);
+  MyCard aiCard;
+
   @override
   void initState() {
     super.initState();
     controller = new AnimationController(
-        duration: const Duration(seconds: 2), vsync: this);
-    controllerAI = new AnimationController(
         duration: const Duration(seconds: 2), vsync: this);
     animation = new Tween(begin: -1.0, end: -0.25).animate(
         CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn))
@@ -40,24 +40,15 @@ class _HomePageState extends State<HomePage>
         }
       });
     animationAI = new Tween(begin: 1.0, end: 0.25).animate(
-        CurvedAnimation(parent: controllerAI, curve: Curves.fastOutSlowIn))
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          _pressCard(myCard);
-        } else if (status == AnimationStatus.dismissed) {
-          controllerAI.forward();
-        }
-      });
+        CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn));
   }
 
   @override
   void dispose() {
     controller.dispose();
-    controllerAI.dispose();
     super.dispose();
   }
 
-  MyCard aiCard;
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
@@ -111,7 +102,7 @@ class _HomePageState extends State<HomePage>
                 }),
             new ListTile(
                 //第二个功能项
-                title: new Text('关于作者'),
+                title: new Text('关于'),
                 trailing: new Icon(Icons.arrow_right),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -131,44 +122,53 @@ class _HomePageState extends State<HomePage>
       body: new Column(
         //中央内容部分body
         children: [
-          AnimatedBuilder(
-              animation: controller,
-              builder: (BuildContext context, Widget child) {
-                return new Row(children: <Widget>[
-                  Transform(
-                    transform: Matrix4.translationValues(
-                        animation.value * width, 0.0, 0.0),
-                    child: new Center(
-                      child: Container(
-                        padding: const EdgeInsets.only(top: 16.0),
-                        width: 100.0,
-                        height: 200.0,
-                        child: Image(
-                          image: ExactAssetImage("$picPath"),
-                          width: 40,
-                          height: 40,
+          new Expanded(
+            child: new Column(children: <Widget>[
+              AnimatedBuilder(
+                  animation: controller,
+                  builder: (BuildContext context, Widget child) {
+                    return Transform(
+                      transform: Matrix4.translationValues(
+                          animation.value * width, 0.0, 0.0),
+                      child: new Center(
+                        child: Container(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          width: 100.0,
+                          height: 100.0,
+                          child: Image(
+                            image: ExactAssetImage("$playerPicPath"),
+                            width: 40,
+                            height: 40,
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  Transform(
-                    transform: Matrix4.translationValues(
-                        animation.value * width, 0.0, 0.0),
-                    child: new Center(
-                      child: Container(
-                        padding: const EdgeInsets.only(top: 16.0),
-                        width: 100.0,
-                        height: 200.0,
-                        child: Image(
-                          image: ExactAssetImage("$picPath"),
-                          width: 40,
-                          height: 40,
+                    );
+                  }),
+              AnimatedBuilder(
+                  animation: controller,
+                  builder: (BuildContext context, Widget child) {
+                    return Transform(
+                      transform: Matrix4.translationValues(
+                          animationAI.value * width, 0.0, 0.0),
+                      child: new Center(
+                        child: Container(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          width: 100.0,
+                          height: 100.0,
+                          child: Image(
+                            image: ExactAssetImage("$aiPicPath"),
+                            width: 40,
+                            height: 40,
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ]);
-              }),
+                    );
+                  }),
+            ]
+            ),
+      ),
+
+          new SizedBox(height: 10),
           new Expanded(
             child: new Row(
               children: <Widget>[
@@ -184,8 +184,10 @@ class _HomePageState extends State<HomePage>
                         controller.reset();
                         controller.forward();
                         setState(() {
-                          picPath = "images/cards/cut.jpg";
-                          myCard = widget.card2;
+                          playerPicPath = "images/cards/cut.jpg";
+                          myCard = widget.card1;
+                          aiCard = _aiCard();
+                          aiPicPath = _setPicPath(aiCard);
                         });
                       },
                       child: new Text(widget.card1.cardName,
@@ -203,13 +205,14 @@ class _HomePageState extends State<HomePage>
                       ),
                       new FlatButton(
                         onPressed: () {
+                          setState(() {
+                            playerPicPath = "images/cards/stone.jpg";
+                            myCard = widget.card2;
+                            aiCard = _aiCard();
+                            aiPicPath = _setPicPath(aiCard);
+                          });
                           controller.reset();
                           controller.forward();
-                          setState(() {
-                            picPath = "images/cards/stone.jpg";
-                            myCard = widget.card2;
-                          });
-                          //_pressCard(widget.card2);
                         },
                         child: new Text(widget.card2.cardName,
                             style: new TextStyle(fontSize: 20.0)),
@@ -230,10 +233,11 @@ class _HomePageState extends State<HomePage>
                           controller.reset();
                           controller.forward();
                           setState(() {
-                            picPath = "images/cards/paper.jpg";
+                            playerPicPath = "images/cards/paper.jpg";
                             myCard = widget.card3;
+                            aiCard = _aiCard();
+                            aiPicPath = _setPicPath(aiCard);
                           });
-                          //_pressCard(widget.card3);
                         },
                         child: new Text(widget.card3.cardName,
                             style: new TextStyle(fontSize: 20.0)),
@@ -246,6 +250,7 @@ class _HomePageState extends State<HomePage>
           )
         ],
       ),
+      resizeToAvoidBottomPadding: false,
     );
   }
 
@@ -265,17 +270,13 @@ class _HomePageState extends State<HomePage>
 
   String _cardCompare(int n, int m) {
     if (n == m) return "平局";
-    if (n == 0 && m == 1 || n == 1 && m == 2 || n == 2 && m == 1)
+    if (n == 0 && m == 1 || n == 1 && m == 2 || n == 2 && m == 0)
       return "您赢了！";
     else
       return "电脑赢了！";
   }
 
   void _pressCard(MyCard card) {
-    setState(() {
-      widget.mainString = card.cardName;
-    });
-    aiCard = _aiCard();
     showDialog<Null>(
       context: context,
       barrierDismissible: false,
@@ -304,17 +305,9 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget resultAnimation() {
-    return new Container(
-      child: new Text(
-        widget.mainString,
-        style: new TextStyle(fontSize: 35.0),
-      ),
-      alignment: Alignment.center,
-      color: Color.fromARGB(223, 121, 322, 213),
-//            width: 300,
-      height: 300,
-      //padding: movement.value,
-    );
+  String _setPicPath(MyCard card) {
+    if (card.cardId == 0) return "images/cards/cut.jpg";
+    if (card.cardId == 1) return "images/cards/stone.jpg";
+    return "images/cards/paper.jpg";
   }
 }

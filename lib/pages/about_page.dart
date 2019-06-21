@@ -30,29 +30,41 @@ class _AboutPageState extends State<AboutPage> {
             width: 200,
             height: 200,
           ),
-          new Container(
-            child: new MaterialButton(
-              color: Colors.blue,
-              textColor: Colors.white,
-              child: Text(
-                "作者博客",
-                style: TextStyle(
-                  fontSize: 30,
-                ),
-              ),
-              onPressed: _launchURL,
-              height: 40,
-              minWidth: 50,
-            ),
-            alignment: Alignment.center,
+          new ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              new ListTile(
+                  title: new Text('作者博客'),
+                  trailing: new Icon(Icons.arrow_right),
+                  onTap: () {
+                    _launchBlog();
+                  }),
+              new ListTile(
+                  title: new Text('项目地址'),
+                  trailing: new Icon(Icons.arrow_right),
+                  onTap: () {
+                    _launchGit();
+                  }),
+            ],
           ),
+
         ],
       ),
     );
   }
 
-  _launchURL() async {
+  _launchBlog() async {
     const url = 'https://allenmistake.github.io/';
+    if (await canLaunch(url)) {
+      print('iswork');
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _launchGit() async {
+    const url = 'https://github.com/AllenMistake/flutter_app_test';
     if (await canLaunch(url)) {
       print('iswork');
       await launch(url);
