@@ -19,43 +19,48 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   Animation<double> animation;
   AnimationController controller;
-  Animation<EdgeInsets> movement;
-  bool isForward = false;
-
-  initState() {
+  Animation<double> animationAI;
+  AnimationController controllerAI;
+  String picPath = "images/cards/stone.jpg";
+  MyCard myCard = new MyCard('Fighting', 0);
+  @override
+  void initState() {
     super.initState();
     controller = new AnimationController(
-        duration: const Duration(milliseconds: 5000), vsync: this);
-
-    //animation = new Tween(begin: 0.0, end: 300.0).animate(controller)
-    movement = EdgeInsetsTween(
-      begin: EdgeInsets.only(top: 0.0, right: 100.0),
-      end: EdgeInsets.only(top: 0.0, left: 80.0),
-    ).animate(
-      CurvedAnimation(
-        parent: controller,
-        curve: Interval(
-          0.1,
-          0.5,
-          curve: Curves.fastOutSlowIn,
-        ),
-      ),
-    )..addListener(() {
-        setState(() {
-          // the state that has changed here is the animation object’s value
-        });
+        duration: const Duration(seconds: 2), vsync: this);
+    controllerAI = new AnimationController(
+        duration: const Duration(seconds: 2), vsync: this);
+    animation = new Tween(begin: -1.0, end: -0.25).animate(
+        CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn))
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          _pressCard(myCard);
+        } else if (status == AnimationStatus.dismissed) {
+          controller.forward();
+        }
       });
-    controller.forward();
+    animationAI = new Tween(begin: 1.0, end: 0.25).animate(
+        CurvedAnimation(parent: controllerAI, curve: Curves.fastOutSlowIn))
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          _pressCard(myCard);
+        } else if (status == AnimationStatus.dismissed) {
+          controllerAI.forward();
+        }
+      });
   }
 
-  dispose() {
+  @override
+  void dispose() {
     controller.dispose();
+    controllerAI.dispose();
     super.dispose();
   }
 
   MyCard aiCard;
   @override
   Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width;
     return new Scaffold(
       appBar: new AppBar(
         title: new Text("石头剪刀布"),
@@ -63,6 +68,7 @@ class _HomePageState extends State<HomePage>
       ), //头部的标题AppBar
       drawer: new Drawer(
         child: new ListView(
+          shrinkWrap: true,
           children: <Widget>[
             new UserAccountsDrawerHeader(
               //Material内置控件
@@ -128,23 +134,41 @@ class _HomePageState extends State<HomePage>
           AnimatedBuilder(
               animation: controller,
               builder: (BuildContext context, Widget child) {
-                return Container(
-                  padding: movement.value,
-                  child: new Text(widget.mainString),
-                );
+                return new Row(children: <Widget>[
+                  Transform(
+                    transform: Matrix4.translationValues(
+                        animation.value * width, 0.0, 0.0),
+                    child: new Center(
+                      child: Container(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        width: 100.0,
+                        height: 200.0,
+                        child: Image(
+                          image: ExactAssetImage("$picPath"),
+                          width: 40,
+                          height: 40,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Transform(
+                    transform: Matrix4.translationValues(
+                        animation.value * width, 0.0, 0.0),
+                    child: new Center(
+                      child: Container(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        width: 100.0,
+                        height: 200.0,
+                        child: Image(
+                          image: ExactAssetImage("$picPath"),
+                          width: 40,
+                          height: 40,
+                        ),
+                      ),
+                    ),
+                  ),
+                ]);
               }),
-          /*
-          new Container(
-            child: new Text(
-              widget.mainString,
-              style: new TextStyle(fontSize: 35.0),
-            ),
-            alignment: Alignment.center,
-            color: Color.fromARGB(223, 121, 322, 213),
-            height: 300,
-            //padding: movement.value,
-          ),
-          */
           new Expanded(
             child: new Row(
               children: <Widget>[
@@ -157,7 +181,12 @@ class _HomePageState extends State<HomePage>
                     ),
                     new MaterialButton(
                       onPressed: () {
-                        _pressCard(widget.card1);
+                        controller.reset();
+                        controller.forward();
+                        setState(() {
+                          picPath = "images/cards/cut.jpg";
+                          myCard = widget.card2;
+                        });
                       },
                       child: new Text(widget.card1.cardName,
                           style: new TextStyle(fontSize: 20.0)),
@@ -174,10 +203,13 @@ class _HomePageState extends State<HomePage>
                       ),
                       new FlatButton(
                         onPressed: () {
-                          isForward ? controller.reverse() : controller.forward();
-                          isForward = !isForward;
-                          print('forward');
-                          _pressCard(widget.card2);
+                          controller.reset();
+                          controller.forward();
+                          setState(() {
+                            picPath = "images/cards/stone.jpg";
+                            myCard = widget.card2;
+                          });
+                          //_pressCard(widget.card2);
                         },
                         child: new Text(widget.card2.cardName,
                             style: new TextStyle(fontSize: 20.0)),
@@ -195,7 +227,13 @@ class _HomePageState extends State<HomePage>
                       ),
                       new FlatButton(
                         onPressed: () {
-                          _pressCard(widget.card3);
+                          controller.reset();
+                          controller.forward();
+                          setState(() {
+                            picPath = "images/cards/paper.jpg";
+                            myCard = widget.card3;
+                          });
+                          //_pressCard(widget.card3);
                         },
                         child: new Text(widget.card3.cardName,
                             style: new TextStyle(fontSize: 20.0)),
@@ -263,9 +301,7 @@ class _HomePageState extends State<HomePage>
           ],
         );
       },
-    ).then((val) {
-      print(val);
-    });
+    );
   }
 
   Widget resultAnimation() {
