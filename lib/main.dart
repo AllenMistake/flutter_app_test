@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_app_test/pages/home_page.dart';
+import 'Routes.dart';
 
-void main() => runApp(new MaterialApp(
-      home: new HomePage(),
-    ));
+void main() {
+  new Routes();
+}

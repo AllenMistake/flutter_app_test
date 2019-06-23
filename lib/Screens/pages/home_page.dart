@@ -2,9 +2,9 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_test/Screens/pages/about_page.dart';
+import 'package:flutter_app_test/Screens/pages/set_page.dart';
 import 'package:flutter_app_test/cards/card_tl.dart';
-import 'package:flutter_app_test/pages/about_page.dart';
-import 'package:flutter_app_test/pages/set_page.dart';
 
 class HomePage extends StatefulWidget {
   final MyCard card1 = new MyCard("剪刀", 0);
@@ -20,6 +20,7 @@ class _HomePageState extends State<HomePage>
   Animation<double> animation;
   AnimationController controller;
   Animation<double> animationAI;
+  bool disableButton = true;
   String playerPicPath = "images/cards/stone.jpg";
   String aiPicPath = "images/cards/stone.jpg";
   MyCard myCard = new MyCard('Fighting', 0);
@@ -35,6 +36,7 @@ class _HomePageState extends State<HomePage>
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
           _pressCard(myCard);
+          disableButton = true;
         } else if (status == AnimationStatus.dismissed) {
           controller.forward();
         }
@@ -181,14 +183,17 @@ class _HomePageState extends State<HomePage>
                     ),
                     new MaterialButton(
                       onPressed: () {
-                        controller.reset();
-                        controller.forward();
-                        setState(() {
-                          playerPicPath = "images/cards/cut.jpg";
-                          myCard = widget.card1;
-                          aiCard = _aiCard();
-                          aiPicPath = _setPicPath(aiCard);
-                        });
+                        if(disableButton){
+                          controller.reset();
+                          controller.forward();
+                          setState(() {
+                            playerPicPath = "images/cards/cut.jpg";
+                            myCard = widget.card1;
+                            aiCard = _aiCard();
+                            aiPicPath = _setPicPath(aiCard);
+                            disableButton = false;
+                          });
+                        }
                       },
                       child: new Text(widget.card1.cardName,
                           style: new TextStyle(fontSize: 20.0)),
@@ -205,14 +210,17 @@ class _HomePageState extends State<HomePage>
                       ),
                       new FlatButton(
                         onPressed: () {
-                          setState(() {
-                            playerPicPath = "images/cards/stone.jpg";
-                            myCard = widget.card2;
-                            aiCard = _aiCard();
-                            aiPicPath = _setPicPath(aiCard);
-                          });
-                          controller.reset();
-                          controller.forward();
+                          if(disableButton){
+                            setState(() {
+                              playerPicPath = "images/cards/stone.jpg";
+                              myCard = widget.card2;
+                              aiCard = _aiCard();
+                              aiPicPath = _setPicPath(aiCard);
+                              disableButton = false;
+                            });
+                            controller.reset();
+                            controller.forward();
+                          }
                         },
                         child: new Text(widget.card2.cardName,
                             style: new TextStyle(fontSize: 20.0)),
@@ -230,14 +238,17 @@ class _HomePageState extends State<HomePage>
                       ),
                       new FlatButton(
                         onPressed: () {
-                          controller.reset();
-                          controller.forward();
-                          setState(() {
-                            playerPicPath = "images/cards/paper.jpg";
-                            myCard = widget.card3;
-                            aiCard = _aiCard();
-                            aiPicPath = _setPicPath(aiCard);
-                          });
+                          if(disableButton){
+                            controller.reset();
+                            controller.forward();
+                            setState(() {
+                              playerPicPath = "images/cards/paper.jpg";
+                              myCard = widget.card3;
+                              aiCard = _aiCard();
+                              aiPicPath = _setPicPath(aiCard);
+                              disableButton = false;
+                            });
+                          }
                         },
                         child: new Text(widget.card3.cardName,
                             style: new TextStyle(fontSize: 20.0)),

@@ -53,6 +53,8 @@ flutter:
     - images/cards/cut.jpg
     - images/cards/stone.jpg
     - images/cards/paper.jpg
+    - images/login.jpg
+    - images/tick.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
