@@ -6,6 +6,6 @@ DecorationImage backgroundImage = new DecorationImage(
 );
 
 DecorationImage tick = new DecorationImage(
-  image: new ExactAssetImage('images/tick.png'),
+  image: new ExactAssetImage('images/avatar.jpg'),
   fit: BoxFit.cover,
 );

@@ -37,9 +37,10 @@ class _HomePageState extends State<HomePage>
         if (status == AnimationStatus.completed) {
           _pressCard(myCard);
           disableButton = true;
-        } else if (status == AnimationStatus.dismissed) {
-          controller.forward();
         }
+//        else if (status == AnimationStatus.dismissed) {
+//          controller.forward();
+//        }
       });
     animationAI = new Tween(begin: 1.0, end: 0.25).animate(
         CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn));
@@ -51,218 +52,285 @@ class _HomePageState extends State<HomePage>
     super.dispose();
   }
 
+  _showDialog() {
+    showDialog<Null>(
+      context: context,
+      child: new AlertDialog(content: new Text('退出当前界面'), actions: <Widget>[
+        new FlatButton(
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, "/login");
+            },
+            child: new Text('确定'))
+      ]),
+    );
+  }
+
+  Future<bool> _outPop() {
+    _showDialog();
+    return new Future.value(false);
+  }
+
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("石头剪刀布"),
-        backgroundColor: Colors.redAccent,
-      ), //头部的标题AppBar
-      drawer: new Drawer(
-        child: new ListView(
-          shrinkWrap: true,
-          children: <Widget>[
-            new UserAccountsDrawerHeader(
-              //Material内置控件
-              accountName: new Text('weitanori'), //用户名
-              accountEmail: new Text('weitanori@hotmail.com'), //用户邮箱
-              currentAccountPicture: new GestureDetector(
-                //用户头像
-                onTap: () => print('current user'),
-                child: new CircleAvatar(
-                    //圆形图标控件
-                    backgroundImage: new ExactAssetImage('images/avatar.jpg')),
-              ),
-              decoration: new BoxDecoration(
-                //用一个BoxDecoration装饰器提供背景图片
-                image: new DecorationImage(
-                  fit: BoxFit.fill,
-                  // image: new NetworkImage('https://raw.githubusercontent.com/flutter/website/master/_includes/code/layout/lakes/images/lake.jpg')
-                  //可以试试图片调取自本地。调用本地资源，需要到pubspec.yaml中配置文件路径
-                  image: new ExactAssetImage('images/sss.png'),
-                ),
-              ),
+    return new WillPopScope(
+        onWillPop: _outPop,
+        child: new Scaffold(
+          appBar: new AppBar(
+            title: new Text(
+              "石头剪刀布",
             ),
-            new ListTile(
-                //第一个功能项
-                title: new Text('设置'),
-                trailing: new Icon(Icons.settings),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.push<List>(
-                    context,
-                    new MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          new SetPage(widget.card1, widget.card2, widget.card3),
-                    ),
-                  ).then((List result) {
-                    if (result[0] != '') widget.card1.cardName = result[0];
-                    if (result[1] != '') widget.card2.cardName = result[1];
-                    if (result[2] != '') widget.card3.cardName = result[2];
-                  });
-                }),
-            new ListTile(
-                //第二个功能项
-                title: new Text('关于'),
-                trailing: new Icon(Icons.arrow_right),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(new MaterialPageRoute(
-                      builder: (BuildContext context) => new AboutPage()));
-                }),
-            new Divider(), //分割线控件
-            new ListTile(
-              //退出按钮
-              title: new Text('Close'),
-              trailing: new Icon(Icons.cancel),
-              onTap: () => Navigator.of(context).pop(), //点击后收起侧边栏
-            ),
-          ],
-        ),
-      ), //侧边栏按钮Drawer
-      body: new Column(
-        //中央内容部分body
-        children: [
-          new Expanded(
-            child: new Column(children: <Widget>[
-              AnimatedBuilder(
-                  animation: controller,
-                  builder: (BuildContext context, Widget child) {
-                    return Transform(
-                      transform: Matrix4.translationValues(
-                          animation.value * width, 0.0, 0.0),
-                      child: new Center(
-                        child: Container(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          width: 100.0,
-                          height: 100.0,
-                          child: Image(
-                            image: ExactAssetImage("$playerPicPath"),
-                            width: 40,
-                            height: 40,
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-              AnimatedBuilder(
-                  animation: controller,
-                  builder: (BuildContext context, Widget child) {
-                    return Transform(
-                      transform: Matrix4.translationValues(
-                          animationAI.value * width, 0.0, 0.0),
-                      child: new Center(
-                        child: Container(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          width: 100.0,
-                          height: 100.0,
-                          child: Image(
-                            image: ExactAssetImage("$aiPicPath"),
-                            width: 40,
-                            height: 40,
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-            ]
-            ),
-      ),
-
-          new SizedBox(height: 10),
-          new Expanded(
-            child: new Row(
+            backgroundColor: Color.fromRGBO(119, 136, 153, 1.0),
+          ), //头部的标题AppBar
+          drawer: new Drawer(
+            child: new ListView(
+              shrinkWrap: true,
               children: <Widget>[
-                new Expanded(
-                  child: Column(children: [
-                    Image(
-                      image: ExactAssetImage("images/cards/cut.jpg"),
-                      width: 40,
-                      height: 40,
+                new UserAccountsDrawerHeader(
+                  //Material内置控件
+                  accountName: new Text('weitanori'), //用户名
+                  accountEmail: new Text('weitanori@hotmail.com'), //用户邮箱
+                  currentAccountPicture: new GestureDetector(
+                    //用户头像
+                    onTap: () => print('current user'),
+                    child: new CircleAvatar(
+                        //圆形图标控件
+                        backgroundImage:
+                            new ExactAssetImage('images/avatar.jpg')),
+                  ),
+                  decoration: new BoxDecoration(
+                    //用一个BoxDecoration装饰器提供背景图片
+                    image: new DecorationImage(
+                      fit: BoxFit.fill,
+                      // image: new NetworkImage('https://raw.githubusercontent.com/flutter/website/master/_includes/code/layout/lakes/images/lake.jpg')
+                      //可以试试图片调取自本地。调用本地资源，需要到pubspec.yaml中配置文件路径
+                      image: new ExactAssetImage('images/sss.png'),
                     ),
-                    new MaterialButton(
-                      onPressed: () {
-                        if(disableButton){
-                          controller.reset();
-                          controller.forward();
-                          setState(() {
-                            playerPicPath = "images/cards/cut.jpg";
-                            myCard = widget.card1;
-                            aiCard = _aiCard();
-                            aiPicPath = _setPicPath(aiCard);
-                            disableButton = false;
-                          });
-                        }
-                      },
-                      child: new Text(widget.card1.cardName,
-                          style: new TextStyle(fontSize: 20.0)),
-                    ),
-                  ]),
-                ),
-                new Expanded(
-                  child: new Column(
-                    children: <Widget>[
-                      Image(
-                        image: ExactAssetImage("images/cards/stone.jpg"),
-                        width: 40,
-                        height: 40,
-                      ),
-                      new FlatButton(
-                        onPressed: () {
-                          if(disableButton){
-                            setState(() {
-                              playerPicPath = "images/cards/stone.jpg";
-                              myCard = widget.card2;
-                              aiCard = _aiCard();
-                              aiPicPath = _setPicPath(aiCard);
-                              disableButton = false;
-                            });
-                            controller.reset();
-                            controller.forward();
-                          }
-                        },
-                        child: new Text(widget.card2.cardName,
-                            style: new TextStyle(fontSize: 20.0)),
-                      ),
-                    ],
                   ),
                 ),
-                new Expanded(
-                  child: new Column(
-                    children: <Widget>[
-                      Image(
-                        image: ExactAssetImage("images/cards/paper.jpg"),
-                        width: 40,
-                        height: 40,
-                      ),
-                      new FlatButton(
-                        onPressed: () {
-                          if(disableButton){
-                            controller.reset();
-                            controller.forward();
-                            setState(() {
-                              playerPicPath = "images/cards/paper.jpg";
-                              myCard = widget.card3;
-                              aiCard = _aiCard();
-                              aiPicPath = _setPicPath(aiCard);
-                              disableButton = false;
-                            });
-                          }
-                        },
-                        child: new Text(widget.card3.cardName,
-                            style: new TextStyle(fontSize: 20.0)),
-                      ),
-                    ],
-                  ),
+                new ListTile(
+                    //第一个功能项
+                    title: new Text('设置'),
+                    trailing: new Icon(Icons.settings),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.push<List>(
+                        context,
+                        new MaterialPageRoute(
+                          builder: (BuildContext context) => new SetPage(
+                              widget.card1, widget.card2, widget.card3),
+                        ),
+                      ).then((List result) {
+                        if (result[0] != '') widget.card1.cardName = result[0];
+                        if (result[1] != '') widget.card2.cardName = result[1];
+                        if (result[2] != '') widget.card3.cardName = result[2];
+                      });
+                    }),
+                new ListTile(
+                    //第二个功能项
+                    title: new Text('关于'),
+                    trailing: new Icon(Icons.arrow_right),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).push(new MaterialPageRoute(
+                          builder: (BuildContext context) => new AboutPage()));
+                    }),
+                new Divider(), //分割线控件
+                new ListTile(
+                  //退出按钮
+                  title: new Text('Close'),
+                  trailing: new Icon(Icons.cancel),
+                  onTap: () => Navigator.of(context).pop(), //点击后收起侧边栏
                 ),
               ],
             ),
-          )
-        ],
-      ),
-      resizeToAvoidBottomPadding: false,
-    );
+          ), //侧边栏按钮Drawer
+          body: new Column(
+            //中央内容部分body
+            children: [
+              new Expanded(
+                child: new Column(children: <Widget>[
+                  AnimatedBuilder(
+                      animation: controller,
+                      builder: (BuildContext context, Widget child) {
+                        return Transform(
+                          transform: Matrix4.translationValues(
+                              animation.value * width, 0.0, 0.0),
+                          child: new Center(
+                            child: Container(
+                              padding: const EdgeInsets.only(top: 16.0),
+                              width: 100.0,
+                              height: 100.0,
+                              child: Image(
+                                image: ExactAssetImage("$playerPicPath"),
+                                width: 40,
+                                height: 40,
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                  AnimatedBuilder(
+                      animation: controller,
+                      builder: (BuildContext context, Widget child) {
+                        return Transform(
+                          transform: Matrix4.translationValues(
+                              animationAI.value * width, 0.0, 0.0),
+                          child: new Center(
+                            child: Container(
+                              padding: const EdgeInsets.only(top: 16.0),
+                              width: 100.0,
+                              height: 100.0,
+                              child: Image(
+                                image: ExactAssetImage("$aiPicPath"),
+                                width: 40,
+                                height: 40,
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                ]),
+              ),
+              new SizedBox(height: 10),
+              new Expanded(
+                child: new Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: Column(children: [
+                        new FlatButton(
+                          child: Image(
+                            image: ExactAssetImage("images/cards/cut.jpg"),
+                            width: 50.0,
+                            height: 50.0,
+                          ),
+                          onPressed: () {
+                            if (disableButton) {
+                              controller.reset();
+                              controller.forward();
+                              setState(() {
+                                playerPicPath = "images/cards/cut.jpg";
+                                myCard = widget.card1;
+                                aiCard = _aiCard();
+                                aiPicPath = _setPicPath(aiCard);
+                                disableButton = false;
+                              });
+                            }
+                          },
+                        ),
+                        new MaterialButton(
+                          onPressed: () {
+                            if (disableButton) {
+                              controller.reset();
+                              controller.forward();
+                              setState(() {
+                                playerPicPath = "images/cards/cut.jpg";
+                                myCard = widget.card1;
+                                aiCard = _aiCard();
+                                aiPicPath = _setPicPath(aiCard);
+                                disableButton = false;
+                              });
+                            }
+                          },
+                          child: new Text(widget.card1.cardName,
+                              style: new TextStyle(fontSize: 20.0)),
+                        ),
+                      ]),
+                    ),
+                    new Expanded(
+                      child: new Column(
+                        children: <Widget>[
+                          new FlatButton(
+                            child: Image(
+                              image: ExactAssetImage("images/cards/stone.jpg"),
+                              width: 50.0,
+                              height: 50.0,
+                            ),
+                            onPressed: () {
+                              if (disableButton) {
+                                setState(() {
+                                  playerPicPath = "images/cards/stone.jpg";
+                                  myCard = widget.card2;
+                                  aiCard = _aiCard();
+                                  aiPicPath = _setPicPath(aiCard);
+                                  disableButton = false;
+                                });
+                                controller.reset();
+                                controller.forward();
+                              }
+                            },
+                          ),
+                          new FlatButton(
+                            onPressed: () {
+                              if (disableButton) {
+                                setState(() {
+                                  playerPicPath = "images/cards/stone.jpg";
+                                  myCard = widget.card2;
+                                  aiCard = _aiCard();
+                                  aiPicPath = _setPicPath(aiCard);
+                                  disableButton = false;
+                                });
+                                controller.reset();
+                                controller.forward();
+                              }
+                            },
+                            child: new Text(widget.card2.cardName,
+                                style: new TextStyle(fontSize: 20.0)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    new Expanded(
+                      child: new Column(
+                        children: <Widget>[
+                          new FlatButton(
+                            child: Image(
+                              image:
+                                  new ExactAssetImage("images/cards/paper.jpg"),
+                              width: 50.0,
+                              height: 50.0,
+                            ),
+                            onPressed: () {
+                              if (disableButton) {
+                                controller.reset();
+                                controller.forward();
+                                setState(() {
+                                  playerPicPath = "images/cards/paper.jpg";
+                                  myCard = widget.card3;
+                                  aiCard = _aiCard();
+                                  aiPicPath = _setPicPath(aiCard);
+                                  disableButton = false;
+                                });
+                              }
+                            },
+                          ),
+                          new FlatButton(
+                            onPressed: () {
+                              if (disableButton) {
+                                controller.reset();
+                                controller.forward();
+                                setState(() {
+                                  playerPicPath = "images/cards/paper.jpg";
+                                  myCard = widget.card3;
+                                  aiCard = _aiCard();
+                                  aiPicPath = _setPicPath(aiCard);
+                                  disableButton = false;
+                                });
+                              }
+                            },
+                            child: new Text(widget.card3.cardName,
+                                style: new TextStyle(fontSize: 20.0)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+          resizeToAvoidBottomPadding: false,
+        ));
   }
 
   MyCard _aiCard() {

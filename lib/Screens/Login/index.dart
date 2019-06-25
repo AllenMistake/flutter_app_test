@@ -43,6 +43,10 @@ class LoginScreenState extends State<LoginScreen>
     } on TickerCanceled {}
   }
 
+  static Future<void> pop() async {
+    await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+  }
+
   Future<bool> _onWillPop() {
     return showDialog(
           context: context,
@@ -54,8 +58,11 @@ class LoginScreenState extends State<LoginScreen>
                 child: new Text('No'),
               ),
               new FlatButton(
-                onPressed: () => exit(0),
-                    //Navigator.pushReplacementNamed(context, "/home"),
+                onPressed: ()
+                  async {
+                    await pop();
+                },
+                //Navigator.pushReplacementNamed(context, "/home"),
                 child: new Text('Yes'),
               ),
             ],
