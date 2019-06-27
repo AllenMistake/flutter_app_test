@@ -4,9 +4,13 @@ class InputFieldArea extends StatelessWidget {
   final String hint;
   final bool obscure;
   final IconData icon;
-  InputFieldArea({this.hint, this.obscure, this.icon});
+  final TextEditingController controller;
+
+  InputFieldArea({this.hint, this.obscure, this.icon,this.controller});
+
   @override
   Widget build(BuildContext context) {
+
     return (new Container(
       decoration: new BoxDecoration(
         border: new Border(
@@ -17,6 +21,7 @@ class InputFieldArea extends StatelessWidget {
         ),
       ),
       child: new TextFormField(
+        controller: controller,
         obscureText: obscure,
         style: const TextStyle(
           color: Colors.white,
@@ -34,5 +39,6 @@ class InputFieldArea extends StatelessWidget {
         ),
       ),
     ));
+
   }
 }

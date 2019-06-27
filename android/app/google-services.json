@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "148952113871",
+    "firebase_url": "https://user-of-cut-stone-paper.firebaseio.com",
+    "project_id": "user-of-cut-stone-paper",
+    "storage_bucket": "user-of-cut-stone-paper.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:148952113871:android:899534ddcde8c13e",
+        "android_client_info": {
+          "package_name": "weitanori.com.example.flutter_app_test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "148952113871-veau9lm4gsisbnkfli7fthg4br0tf6dn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-Q-lh7Inj_SoolVg5S8Hhppg19-gYJSU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "148952113871-veau9lm4gsisbnkfli7fthg4br0tf6dn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
