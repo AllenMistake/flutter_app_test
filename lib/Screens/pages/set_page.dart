@@ -20,7 +20,6 @@ class _SetPageState extends State<SetPage> {
     final TextEditingController _controller1 = TextEditingController();
     final TextEditingController _controller2 = TextEditingController();
     final TextEditingController _controller3 = TextEditingController();
-    // TODO: implement build
     return new Scaffold(
       appBar: new AppBar(
         title: new Text("设置页面"),

@@ -25,6 +25,9 @@ class LoginScreenState extends State<LoginScreen>
   final TextEditingController pwController = TextEditingController();
   AnimationController _loginButtonController;
   var animationStatus = 0;
+  //读取firebase数据
+  DocumentSnapshot ds;
+  List<DocumentSnapshot> l;
   @override
   void initState() {
     super.initState();
@@ -72,69 +75,7 @@ class LoginScreenState extends State<LoginScreen>
         false;
   }
 
-  /*
   Widget _buildBody(BuildContext context) {
-    // TODO: get actual snapshot from Cloud Firestore
-    //return _buildList(context, dummySnapshot);
-    return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('user').where("userName",isEqualTo: "userName"),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) return LinearProgressIndicator();
-        //print(snapshot.data.documents.elementAt(0).toString());
-        Firestore.instance.collection('user').document("Allen").get().then((DocumentSnapshot ds) {
-          final record = Record.fromSnapshot(ds);
-          print(record.name);
-        });
-        return _buildList(context, snapshot.data.documents);
-      },
-    );
-  }
-
-  Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
-    return ListView(
-      padding: const EdgeInsets.only(top: 20.0),
-      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
-    );
-  }
-
-  Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    final record = Record.fromSnapshot(data);
-    return Padding(
-      key: ValueKey(record.name),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        child: ListTile(
-          title: Text(record.name),
-          trailing: Text(record.pw.toString()),
-          //版本1：点击事件告诉Colud Firestore 更新数据库的值
-          //onTap: () => record.reference.updateData({'votes': record.votes + 1})
-          //版本二：资源竞态的解决方法
-          /*
-          如果在 transaction.get(...) 和 transaction.update(...) 调用之间发生了
-          votes 数据的更改，那么当前的事务并不会被提交，而是进行重试，如果重试 5 次还
-          是失败，那么这个事务就会失败。
-           */
-          /*
-          onTap: () => Firestore.instance.runTransaction((transaction) async {
-            final freshSnapshot = await transaction.get(record.reference);
-            final fresh = Record.fromSnapshot(freshSnapshot);
-            await transaction
-                .update(record.reference, {'votes': fresh.votes + 1});
-          }),
-          */
-        ),
-      ),
-    );
-  }
-
-*/
-  Widget _buildBody(BuildContext context) {
-    // TODO: get actual snapshot from Cloud Firestore
-    //return _buildList(context, dummySnapshot);
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance.collection('user').snapshots(),
       builder: (context, snapshot) {
@@ -144,23 +85,8 @@ class LoginScreenState extends State<LoginScreen>
     );
   }
 
-  DocumentSnapshot ds;
-  List<DocumentSnapshot> l;
-
-
-
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
 
-    //  7
-
-//    for(int i = 0;l[i+1]!=null;i++){
-//      record = Record.fromSnapshot(l[i]);
-//      userMap[record.name] = record.pw;
-//      print(record.name);
-//    }
-//    record = Record.fromSnapshot(l[1]);
-//    print(record.name);
-    //final record = Record.fromSnapshot(l[0]);
     return (new WillPopScope(
       onWillPop: _onWillPop,
       child: new Scaffold(
@@ -204,7 +130,6 @@ class LoginScreenState extends State<LoginScreen>
                                       onTap: () {
                                         var userMap = Map<String, String>();
                                         l = snapshot.map((data) => ds = data).toList();
-                                        record = Record.fromSnapshot(l[1]);
                                         for (int i = 0;i<l.length;i++){
                                           record = Record.fromSnapshot(l[i]);
                                           userMap.putIfAbsent(record.name, () => record.pw);
@@ -296,13 +221,11 @@ class Record {
   final String name;
   final String pw;
   final DocumentReference reference;
-
   Record.fromMap(Map<String, dynamic> map, {this.reference})
       : assert(map['userName'] != null),
         assert(map['passWord'] != null),
         name = map['userName'],
         pw = map['passWord'];
-
   Record.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data, reference: snapshot.reference);
 
